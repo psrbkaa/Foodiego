@@ -12,20 +12,27 @@
             const drinksMenu = document.getElementById("drinks-menu");
             drinksMenu.style.display = drinksMenu.style.display === "none" ? "block" : "none";
         }
+        function updateDimsumPriceAndImage(price, imageUrl) {
+            document.getElementById("harga").innerText = "Rp " + price.toLocaleString("id-ID");
+            document.getElementById("dimsum-image").src = imageUrl;
+        }
 
-        function addToOrder(name, price, qtyId, flavorName = null) {
+        function addDimsumToOrder() {
+            const qty = parseInt(document.getElementById("qty-dimsum").value);
+            const selectedPrice = parseInt(document.querySelector('input[name="jumlah-isi"]:checked').value);
+            if (qty <= 0 || isNaN(qty)) {
+                alert("Masukkan jumlah yang valid!");
+                return;
+            }
+            order.push({ name: "Dimsum Mentai", price: selectedPrice, quantity: qty });
+            updateOrderList();
+        }
+
+        function addToOrder(name, price, qtyId) {
             const quantity = parseInt(document.getElementById(qtyId).value);
             if (quantity <= 0 || isNaN(quantity)) {
                 alert("Masukkan jumlah yang valid!");
                 return;
-            }
-            let flavor = "";
-            if (flavorName) {
-                const selectedFlavor = document.querySelector(`input[name="${flavorName}"]:checked`);
-                if (selectedFlavor) {
-                    flavor = selectedFlavor.value;
-                    name += ` (${flavor})`;
-                }
             }
             order.push({ name, price, quantity });
             updateOrderList();
@@ -37,6 +44,7 @@
             order.forEach((item, index) => {
                 const li = document.createElement("li");
                 li.textContent = `${item.quantity}x ${item.name} - Rp ${(item.price * item.quantity).toLocaleString()}`;
+                orderList.appendChild(li);
 
                 const deleteButton = document.createElement("button");
                 deleteButton.textContent = "Hapus";
@@ -45,6 +53,7 @@
                 deleteButton.style.border = "none";
                 deleteButton.style.padding = "5px 10px";
                 deleteButton.style.marginLeft = "10px";
+                deleteButton.style.marginTop = "10px";
                 deleteButton.style.cursor = "pointer";
                 deleteButton.onclick = () => removeItemFromOrder(index);
 
